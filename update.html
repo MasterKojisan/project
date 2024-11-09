@@ -10,26 +10,31 @@
 
     <script>
         document.getElementById('downloadButton').addEventListener('click', function() {
+            console.log('Button clicked');
             fetch('https://api.github.com/repos/MasterKojisan/project/releases/latest')
                 .then(response => {
+                    console.log('fetching github info', response);
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        throw new Error('network response is not allowed');
                     }
                     return response.json();
                 })
                 .then(data => {
-                    const asset = data.assets.find(asset => asset.name.endsWith('.zip'));
-                    if (asset) {
-                        const downloadUrl = asset.browser_download_url;
-                        const link = document.createElement('a');
-                        link.href = downloadUrl;
-                        link.download = asset.name;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    } else {
-                        console.error('No ZIP asset found in the latest release.');
+                    console.log('Release data:', data);
+                    if (!data.assets || data.assets.length === 0) {
+                        console.error('No assets found in the latest release.');
+                        return;
                     }
+                    const asset = data.assets[0]; // Get the first asset regardless of type
+                    console.log('Asset found:', asset.name);
+                    const downloadUrl = asset.browser_download_url;
+                    console.log('Download URL:', downloadUrl);
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = asset.name;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
                 })
                 .catch(error => console.error('Error:', error));
         });
