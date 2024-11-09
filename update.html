@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Download Latest Release</title>
+</head>
+<body>
+    <h1>Download Latest Release</h1>
+    <button id="downloadButton">Download latest update</button>
+
+    <script>
+        document.getElementById('downloadButton').addEventListener('click', function() {
+            fetch('https://api.github.com/repos/MasterKojisan/project/releases/latest')
+                .then(response => response.json())
+                .then(data => {
+                    const downloadUrl = data.assets[0].browser_download_url;
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = 'latest-release.exe';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
